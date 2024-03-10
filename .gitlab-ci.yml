@@ -4,11 +4,27 @@ stages:
 deploy_minikube:
   stage: deploy
   script:
-    - export MINIKUBE_VERSION=v1.23.2  # Update with the desired Minikube version
+    # Install kubectl (if not already installed)
+    - apt-get update && apt-get install -y kubectl
+
+    # Authenticate with gcloud using the service account key
+    - echo "$GCLOUD_SERVICE_KEY" > gcloud-service-key.json
+    - gcloud auth activate-service-account --key-file=gcloud-service-key.json
+
+    # Set the Google Cloud project ID
+    - gcloud config set project $GCLOUD_PROJECT_ID
+
+    # Set the Google Cloud zone (adjust as needed)
+    - gcloud config set compute/zone $GCLOUD_COMPUTE_ZONE
+
+    # Start Minikube
+    - export MINIKUBE_VERSION=v1.23.2
     - curl -Lo minikube https://storage.googleapis.com/minikube/releases/$MINIKUBE_VERSION/minikube-linux-amd64
     - chmod +x minikube
     - sudo mv minikube /usr/local/bin/
     - minikube start
+
     # Add any additional Minikube setup or deployment steps here
+
   only:
-    - main  # Adjust the branch as needed
+    - master # Adjust the branch as needed
