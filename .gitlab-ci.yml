@@ -11,4 +11,4 @@ deploy_minikube:
     - minikube start
     # Add any additional Minikube setup or deployment steps here
   only:
-    - master  # Adjust the branch as needed
+    - main
